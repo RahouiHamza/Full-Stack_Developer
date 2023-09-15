@@ -1,0 +1,14 @@
+.App {
+    text-align: center;
+}
+.card-img-top {
+    height: 15rem;
+    object-fit: cover;
+}
+.card{
+    border-radius: 42px 10px 10px 10px;
+    margin-top: 10px;
+}
+body{
+    background:rgb(102, 89, 120);
+}
