@@ -14,7 +14,7 @@ Description of project.
     - [UML](https://github.com/RahouiHamza/Full-Stack_Developer/tree/Préparation-d’un-projet-web)
 3. [Usage](#usage)
 4. [Contributing](#contributing)
-5. [License](#license)
+
 
 ## Introduction
 
