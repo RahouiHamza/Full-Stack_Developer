@@ -1,0 +1,90 @@
+-- Active: 1669645325471@@127.0.0.1@3306@ordersdb2023
+use  ordersdb2023;
+CREATE TABLE tbOrdersDetails(
+    OrderId int not null,
+    productid int not null,
+    OrderQuantity int,
+    PRIMARY KEY(OrderId,productid),
+    Foreign Key (OrderId) REFERENCES tblorders(OrderId),
+    Foreign Key (productid) REFERENCES tblproducts(productid)
+);
+--2. Insérer trois enregistrements différents dans chacune des trois tables. 
+insert into tblproducts( productid,Name,Description,UnitPrice,StockQuantity,MinQuantity,MaxQuantity)  VALUES
+(1,'produit-1','desc-1',100,200,50,200),
+(2,'produit-2','desc-2',200,200,100,200),
+(3,'produit-3','desc-3',200,200,100,200) ;
+
+insert into tblorders(OrderId,DateOrder) VALUES
+(1,'2023-01-08 11:58:30'),
+(2,'2023-01-08 11:59:30'),
+(3,'2023-01-09 12:00:30') ;
+insert into tbordersdetails(OrderId,productid,OrderQuantity) VALUES
+(1,1,50),
+(2,2,50),
+(3,3,50);
+
+/*. Ecrire un programme qui calcule pour chaque commande le montant total de
+la commande et affiche aussi une autre colonne avec le message 'Commande
+Normale' ou 'Commande Spéciale' selon que le montant est inférieur ou
+supérieur à 100 DHS.*/
+  
+DELIMITER $$
+CREATE FUNCTION calcule_montant (order_id INT)
+RETURNS VARCHAR(255)
+READS SQL DATA
+DETERMINISTIC
+BEGIN
+ DECLARE montant DECIMAL(9,2);
+  SELECT SUM(p.UnitPrice * od.OrderQuantity) INTO montant
+  FROM tblproducts p
+  JOIN tbOrdersDetails od ON p.productid = od.productid
+  WHERE p.productid = order_id;
+  IF montant < 100 THEN
+    RETURN CONCAT('Commande Normale: ', montant);
+  ELSE
+    RETURN CONCAT('Commmade Spéciale: ', montant);
+  END IF;
+END $$
+DELIMITER ;
+SELECT p.Name, p.productid, calcule_montant(p.productid) AS total_amount
+FROM tbOrdersDetails od
+JOIN tblproducts p ON od.productid = p.productid;
+
+--4. A l'aide d'un curseur, écrire un programme qui pour chaque commande 
+
+
+DELIMITER $$
+CREATE PROCEDURE displayOrders()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE order_id INT;
+  DECLARE order_date DATETIME;
+  DECLARE order_amount DECIMAL(10,2);
+  DECLARE order_cursor CURSOR FOR SELECT tblorders.OrderId, DateOrder FROM tblorders;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN order_cursor;
+  order_loop: LOOP
+    FETCH order_cursor INTO order_id, order_date;
+    IF done THEN
+      LEAVE order_loop;
+    END IF;
+
+    SELECT SUM(p.UnitPrice * od.OrderQuantity) INTO order_amount
+    FROM tblproducts p
+    JOIN tbOrdersDetails od ON p.productid = od.productid
+    WHERE od.OrderId = order_id;
+
+    SELECT CONCAT('Commande N°: ', order_id, ' Effectuée le: ', order_date) AS order_info;
+    SELECT p.Name AS product_name, od.OrderQuantity, p.UnitPrice, od.OrderQuantity * p.UnitPrice AS total_price
+    FROM tbOrdersDetails od
+    JOIN tblproducts p ON od.productid = p.productid
+    WHERE od.OrderId = order_id;
+    SELECT CONCAT('Montant total: ', order_amount) AS order_total;
+  END LOOP;
+
+  CLOSE order_cursor;
+END $$
+DELIMITER ;
+DROP PROCEDURE displayOrders;
+CALL displayOrders();
