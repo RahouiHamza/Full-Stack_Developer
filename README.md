@@ -1,33 +1,30 @@
 # Full-Stack_Developer
 Full Stack Developer Courses
 
-Description of your project.
+Description of project.
 
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Getting Started](#getting-started)
-3. [Courses](#courses)
+2. [Courses](#courses)
     - [SQL](https://github.com/RahouiHamza/Full-Stack_Developer/tree/MYSQL-MongoDb)
     - [React](https://github.com/RahouiHamza/Full-Stack_Developer/tree/Laravel)
     - [Laravel](https://github.com/RahouiHamza/Full-Stack_Developer/tree/React)
     - [Cloud](https://github.com/RahouiHamza/Full-Stack_Developer/tree/Création-d’une-application-Cloud-native)
     - [UML](https://github.com/RahouiHamza/Full-Stack_Developer/tree/Préparation-d’un-projet-web)
-4. [Usage](#usage)
-5. [Contributing](#contributing)
-6. [License](#license)
+3. [Usage](#usage)
+4. [Contributing](#contributing)
+5. [License](#license)
 
 ## Introduction
 
-Provide a brief introduction to your project, explaining its purpose and goals.
+Welcome to the [Web Full-Stack] repository on GitHub! This project serves as a comprehensive learning resource for second-year students (2ème année) studying various IT courses, including SQL, React, Laravel, Cloud Computing, and UML. Our goal is to create a structured and accessible platform where students can access course materials, practice exercises, and collaborate on their coursework.
 
-## Getting Started
-
-Include instructions on how to get started with your project. This may include installation, configuration, and any prerequisites.
 
 ## Courses
 
-In this project, we have different branches corresponding to different courses you mentioned.
+In this project, we have different branches corresponding to different courses.
+In this project, we offer the following courses:
 
 ### SQL - MongoDB
 
