@@ -1,0 +1,194 @@
+CC-2 :
+    CC - V1 : 
+        I - 
+            1 -> php artisan make:migration add_is_admin_to_users_table.
+                function up(){
+                    Schema::table("users",function(Bluesprint $table){
+                        $table->bolean("is_admin");
+                    })
+                }
+                function down(){
+                    Schema::table("users",function(Bluesprint $table){
+                        $table->dropColumn("is_admin");
+                    })
+                }
+            
+            2 -> php artisan make:migration drop_posts_table.
+                function up(){
+                    Schema::dropIfExistes("posts");
+                }
+            
+            3 -> php artisan make:migration add_category_id_to_posts_table.
+                funtion up(){
+                    Schema::table("posts",function(Bluesprint $table){
+                        $table->foreignId("category_id")->constrained("categorys");
+                    })
+                }
+            
+        II -
+            1 -> php artisan make:model Post
+            2 -> pubic function last7dayPosts($query){
+                return $query->where("publie_at", ">=" , now()->subDays(7));
+            }
+            3 -> public function categories(){
+                $this->BelongsTo(Categorie::class);
+            }
+
+        III - 
+            1 - php artisan make:controller PostCpntroler.
+                function index(){
+                    $posts = Post::all();
+                    return view("home",compact("posts"));
+                }
+            2 - function show(Post $post){
+                return view("post",compact("post"));
+            }
+            3 - function create(){
+                $categories = Categorie::all();
+                return view("create",compact("categories"));
+            }
+        
+        VI - 
+            1 - Route::get("/posts",[PostController::class,"index"])->name("home");
+            2 - Route::get("/posts/{post:id},[PostController::class,"show"])->name("post");
+            3 - Route::get("/posts/create",[PostController::class,"create"])->name("create);
+
+        V - 
+            1 -
+            <h1>List de posts</h1>
+            <table>
+                <tr>
+                    <th>title</th>
+                    <th>description</th>
+                </tr>
+                <tr>
+                    @foreach($posts as $post)
+                        <td>{{$post->title}}</td>
+                        <td>{{$post->description}}</td>
+                    @endforeach
+                </tr>
+            </table>
+
+            2 - 
+            <h1>Post number #{{$post->id}}</h1>
+            <div>
+                <h4>title : {{$post->title}}</h4>
+                <p>description  : {{$post->description}}</p>
+            </div>
+
+            3 - 
+            <form method="post">
+                @csrf
+                <div>
+                    <label>title</label>
+                    <input type="text" name="title"/>
+                </div>
+                <div>
+                    <label>description</label>
+                    <input type="text" name="description"/>
+                </div>
+                <div>
+                    <label>Categorie</label>
+                    <selecte>
+                        @foreach($categories as $categorie)
+                            <option value={{$categorie->id}}>{{$categorie->name}}</option>
+                        @endforeach
+                    </selecte>
+                </div>
+                <button type="submit">create</button>
+            </form>
+
+    
+    CC - V2 : 
+        
+        I - 
+            1 - composer create-project laravel/larvel TaskManager.
+            2 - php artisan make:migration create_tasks_tables.
+                function up(){
+                    Schema::table("tasks",function(Bluesprint $table){
+                        $table->id();
+                        $table->string("title");
+                        $table->string("description");
+                        $table->bolean("completed");
+                        $table->timestamp();
+                    })
+                }
+                function down(){
+                    Schema::dropIfExistes("tasks");
+                }
+            3 - php artisan migarte
+            4 - php artisan make:model Task --table=tasks
+            5 - php artisan make:controller TaskController
+                function index(){
+                    $tasks = Task::all();
+                    return view("home",compact("tasks"));
+                }
+                function show(Task $task){
+                    return view("task",compact("task"));
+                }
+                function create(){
+                    return view("create");
+                }
+                function store(Request $request ){
+                    $title = $request->title;
+                    $description = $request->description;
+                    $completed = $request->completed;
+                    $request->validate([
+                        "title" => "required",
+                        "description" => "required",
+                        "completed" => "required"
+                    ])
+                    Task::create([
+                        "title" => $title,
+                        "description" => $description,
+                        "completed" => $completed
+                    ])
+                    return to_route("home")
+                }
+                function edit(Task $task){
+                    return view("edit",compact("task"))
+                }
+                function update(Request $request,Task $task){
+                    $request->validate([
+                        "title" => "required",
+                        "description" => "required",
+                        "completed" => "required"
+                    ])
+                    $task->update([
+                        "title" => $request->title,
+                        "description" => $request->description,
+                        "completed" => $request->completed
+                    ])
+                    return to_route("task",task)
+                }
+                function destroy(Task $task){
+                    $task->delete();
+                    return to_route("home")
+                }
+            
+            6 - Route::resource("tasks",[TaskController::class])
+            7 - -> homepage :
+                <h1>Taskes</h1>
+                @foreach($tasks as $task)
+                    <div>
+                        <h2>{{$task->title}}</h2>
+                        <p>{{$task->description}}</p>
+                        <a href={{route("task",$task->id)}}>show</a>
+                        <form method="post" action={{route("destroy",$task->id)}}>
+                            @methd("delete")
+                            @csrf
+                            <button>delete</button>
+                        </form>
+                    </div>
+                @endforeach
+                show :
+                <h1>Task number #{{$task->id}}</h1>
+                <div>
+                        <h2>{{$task->title}}</h2>
+                        <p>{{$task->description}}</p>
+                </div>
+                create:
+                <form method="post" action={{}}>
+                    @csrf
+                    
+                </form>
